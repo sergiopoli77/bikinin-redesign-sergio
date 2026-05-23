@@ -13,6 +13,14 @@
   padding-bottom: 8px;
 }
 
+@media (max-width: 860px) {
+  .previewContainer {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
 .previewContainer::-webkit-scrollbar { display: none; }
 
 /* ────────────────────────────────────────
