@@ -1,0 +1,697 @@
+/* ────────────────────────────────────────
+   Container
+──────────────────────────────────────── */
+.previewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.previewContainer::-webkit-scrollbar { display: none; }
+
+/* ────────────────────────────────────────
+   Tab sisi (Front / Back)
+──────────────────────────────────────── */
+.sideTabsWrapper {
+  display: flex;
+  gap: 6px;
+  padding-left: 84px; /* sejajar dengan canvas, lewati thumbnail strip */
+}
+
+.sideTab {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.sideTab:hover { background: #f8fafc; color: #334155; }
+.sideTabActive { background: #e0f2fe; border-color: #0ea5e9; color: #0284c7; }
+
+/* ────────────────────────────────────────
+   Body: thumbnail strip + canvas
+──────────────────────────────────────── */
+.previewBody {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  position: relative; /* agar rotateControls absolut di pojok kanan atas */
+}
+
+/* ────────────────────────────────────────
+   Thumbnail strip (kiri, vertikal)
+──────────────────────────────────────── */
+.thumbnailStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 72px;
+}
+
+.thumbnail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 4px;
+  cursor: pointer;
+  transition: all 0.18s;
+  width: 100%;
+  font-family: inherit;
+}
+
+.thumbnail:hover { border-color: #93c5fd; }
+
+.thumbnailActive {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.thumbImgWrap {
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.thumbLoaded { opacity: 1; }
+
+.thumbEmpty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 10px;
+}
+
+.thumbLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  padding-bottom: 1px;
+}
+
+.thumbnailActive .thumbLabel { color: #0ea5e9; }
+
+/* ────────────────────────────────────────
+   Canvas utama
+──────────────────────────────────────── */
+.canvasWrapper {
+  flex: 1;
+  min-width: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e8eef4;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #dde3ea;
+  aspect-ratio: 210 / 297;
+  position: relative;
+  transition: aspect-ratio 0.3s ease, box-shadow 0.2s ease;
+  user-select: none;
+  touch-action: none;
+}
+
+.canvasLandscape { aspect-ratio: 297 / 210 !important; }
+
+.canvasZoomed {
+  box-shadow:
+    0 0 0 3px rgba(14, 165, 233, 0.5),
+    0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.canvasInner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+/* Gambar latar */
+.bgImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  user-select: none;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.imgVisible { opacity: 1; }
+.imgHidden  { opacity: 0; }
+
+/* Skeleton loading */
+.imgSkeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  overflow: hidden;
+}
+
+.skeletonShimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* Error overlay */
+.imgErrorOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.imgErrorOverlay span { font-size: 34px; }
+.imgErrorOverlay p { font-size: 12.5px; font-weight: 500; }
+
+.retryBtn {
+  margin-top: 4px;
+  background: #0ea5e9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.retryBtn:hover { background: #0284c7; }
+
+/* Canvas kosong */
+.emptyCanvas {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #94a3b8;
+}
+
+.emptyIcon { font-size: 38px; }
+.emptyCanvas p { font-size: 13.5px; font-weight: 500; }
+
+/* ────────────────────────────────────────
+   Kaca pembesar
+──────────────────────────────────────── */
+.magnifier {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(14, 165, 233, 0.65),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  z-index: 50;
+  background-repeat: no-repeat;
+  transform: translate(-50%, -50%);
+}
+
+/* ────────────────────────────────────────
+   Tombol rotasi (di sudut kanan bawah canvas)
+──────────────────────────────────────── */
+.rotateControls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 30;
+  pointer-events: all;
+}
+
+.rotateBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s;
+  backdrop-filter: blur(6px);
+  color: #475569;
+}
+
+.rotateBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rotateBtn:hover {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.08);
+  color: #0ea5e9;
+}
+
+.rotateBtnActive {
+  border-color: rgba(14, 165, 233, 0.4);
+  color: #0284c7;
+}
+
+.rotateBtnReset {
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 14px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  color: #0284c7;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  backdrop-filter: blur(4px);
+  transition: all 0.15s;
+}
+
+.rotateBtnReset:hover {
+  background: rgba(14, 165, 233, 0.22);
+}
+
+/* ────────────────────────────────────────
+   Zoom hint (bawah canvas)
+──────────────────────────────────────── */
+.zoomHint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  z-index: 40;
+  white-space: nowrap;
+  animation: hintFade 2.4s ease-out 2 forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .canvasWrapper:hover .zoomHint {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+@keyframes hintFade {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(0);   }
+  75%  { opacity: 1; transform: translateX(-50%) translateY(0);   }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+}
+
+.zoomHint svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* Tampilan saat sedang zoom aktif */
+.zoomHintActive {
+  background: rgba(14, 165, 233, 0.88);
+  animation: none;
+  opacity: 1;
+}
+
+/* ── Tombol Rotasi ── */
+.rotateControls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 30;
+  pointer-events: all;
+}
+
+.rotateBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.rotateBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rotateBtn:hover {
+  color: #0ea5e9;
+  border-color: #bae6fd;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.15);
+}
+
+.rotateBtnActive {
+  background: #f0f9ff;
+  color: #0284c7;
+  border-color: #7dd3fc;
+}
+
+.rotateBtnReset {
+  background: #0ea5e9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border: none;
+  border-radius: 20px;
+  padding: 0 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+  transition: background 0.15s;
+}
+
+.rotateBtnReset:hover {
+  background: #0284c7;
+}
+
+/* ────────────────────────────────────────
+   Overlay Editable Layers (Gambar pembangun desain)
+──────────────────────────────────────── */
+.designLayer {
+  position: absolute;
+  /* Posisi dihitung dari tengah elemen (translate: -50% -50%) 
+     karena koordinat X, Y biasanya merepresentasikan titik pusat */
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  animation: floatBob 2.6s ease-in-out infinite;
+}
+
+@keyframes floatBob {
+  0%   { margin-top: 0px;  }
+  30%  { margin-top: -6px; }
+  65%  { margin-top: 3px;  }
+  100% { margin-top: 0px;  }
+}
+
+.designLayer:hover {
+  transform: translate(-50%, -50%) scale(1.02);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  z-index: 20;
+}
+
+.selectedLayer {
+  z-index: 20;
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.layerImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none; /* Klik diteruskan ke .designLayer */
+}
+
+/* Garis tepi saat elemen dipilih */
+.layerOutline {
+  position: absolute;
+  inset: -2px;
+  border: 2px dashed #0ea5e9;
+  border-radius: 4px;
+  pointer-events: none;
+  animation: dash 8s linear infinite;
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -100; }
+}
+
+/* ────────────────────────────────────────
+   Toolbar bawah
+──────────────────────────────────────── */
+.previewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+  flex-wrap: wrap;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 6px 12px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.toolbarBtn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.toolbarBtn:hover { background: #e0f2fe; border-color: #bae6fd; color: #0ea5e9; }
+.toolbarBtnActive { background: #e0f2fe; border-color: #0ea5e9; color: #0284c7; }
+
+.elCountPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+.elCountDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: blink 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ────────────────────────────────────────
+   Panel info elemen terpilih
+──────────────────────────────────────── */
+.elInfoPanel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  animation: fadeSlideUp 0.2s ease;
+  border: 1px solid;
+}
+
+.elInfoFile { border-color: rgba(14, 165, 233, 0.25); box-shadow: 0 4px 20px rgba(14, 165, 233, 0.1); }
+.elInfoText { border-color: rgba(168, 85, 247, 0.25); box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1); }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.elInfoHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.elInfoBadge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 3px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.elInfoName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  flex: 1;
+  text-transform: capitalize;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.elInfoClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.elInfoClose svg { width: 16px; height: 16px; }
+.elInfoClose:hover { color: #475569; }
+
+.elInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.elInfoStat {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid #f1f5f9;
+}
+
+.elInfoStat span   { font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+.elInfoStat strong { font-size: 13px; color: #1e293b; font-weight: 700; }
+
+
+/* ════════════════════════════════════════
+   RESPONSIVE — MOBILE
+════════════════════════════════════════ */
+@media (max-width: 860px) {
+  /* Pada mobile, sticky dinonaktifkan */
+  .previewContainer {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    gap: 12px;
+  }
+
+  /* Tetap pertahankan layout horizontal thumbnail kiri dan canvas kanan di mobile */
+  .previewBody {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .thumbnailStrip {
+    flex-direction: column;
+    width: 60px;
+    gap: 8px;
+    padding-bottom: 2px;
+  }
+
+  .thumbnail {
+    width: 100%;
+  }
+
+  /* Tab sisi sesuaikan margin agar sejajar */
+  .sideTabsWrapper { margin-left: 70px; }
+
+  /* Canvas full width, rasio tetap */
+  .canvasWrapper {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  /* Tombol rotasi sedikit lebih besar untuk sentuhan */
+  .rotateBtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rotateBtn svg { width: 18px; height: 18px; }
+
+  /* Toolbar bisa wrap */
+  .previewToolbar { gap: 6px; }
+  .toolbarBtn     { font-size: 11.5px; padding: 5px 10px; }
+}
+
+@media (max-width: 480px) {
+  .canvasWrapper { border-radius: 10px; }
+
+  .elInfoGrid { grid-template-columns: 1fr 1fr; }
+
+  .sideTab { font-size: 11.5px; padding: 4px 12px; }
+}

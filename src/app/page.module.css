@@ -1,142 +1,128 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+.pageWrapper {
+  min-height: 100vh;
   display: flex;
-  flex: 1;
   flex-direction: column;
+  background: #f8fafc;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  background: #fff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.breadcrumbInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.main {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+.breadcrumbLink {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+  transition: color 0.15s;
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+.breadcrumbLink:hover {
+  color: #0ea5e9;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
+.breadcrumbSep {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.breadcrumbCurrent {
+  font-size: 12.5px;
+  color: #0ea5e9;
   font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
-
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
-  display: flex;
-  flex-direction: row;
+/* Main grid layout */
+.mainContent {
+  flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+  padding: 28px 24px 40px;
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 32px;
+  align-items: start;
 }
 
-.ctas a {
+/* Left Column */
+.leftCol {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Right Column */
+.rightCol {
+  min-width: 0;
+}
+
+/* Footer */
+.footer {
+  background: #fff;
+  border-top: 1px solid #f1f5f9;
+  padding: 16px 0;
+}
+
+.footerInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.footerBrand {
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.5px;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.footerCopy {
+  font-size: 12px;
+  color: #94a3b8;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
+/* Responsive */
+@media (max-width: 1100px) {
+  .mainContent {
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
   }
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
+@media (max-width: 860px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 32px;
   }
 
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
+  .leftCol {
+    position: static;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 16px 12px 28px;
   }
 
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  .footerInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
   }
 }
