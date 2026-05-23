@@ -27,6 +27,17 @@
 .soldBadge svg { width: 12px; height: 12px; }
 
 /* Title */
+/* Header (badge + judul + stats) — disembunyikan di mobile karena muncul via mobileTitleBanner */
+.desktopOnlyHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (max-width: 860px) {
+  .desktopOnlyHeader { display: none; }
+}
+
 .title {
   font-size: 24px;
   font-weight: 800;

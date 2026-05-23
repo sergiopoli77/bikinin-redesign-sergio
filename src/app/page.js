@@ -49,8 +49,20 @@ export default function ArtworkDetailPage() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* Main Content Grid (Header and Footer have been removed as requested) */}
+      {/* Main Content Grid */}
       <main className={styles.mainContent} id="main-content">
+
+        {/* Judul mobile — hanya tampil di mobile, di atas canvas */}
+        <div className={styles.mobileTitleBanner}>
+          <span className={styles.mobileSoldBadge}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Terjual 0 Produk
+          </span>
+          <h1 className={styles.mobileTitleText}>{currentArtwork.title}</h1>
+        </div>
+
         {/* Left Column: Preview + Element List */}
         <aside className={styles.leftCol} aria-label="Artwork preview">
           <ArtworkPreview
